@@ -57,6 +57,15 @@ header {
     border-bottom: 1px solid gray;
 }
 
+textarea {
+    width: 60%;
+    padding: .5rem;
+    border-radius: .5rem;
+    background-color: rgba(240, 240, 240, 0.6);
+    font-family: sans-serif;
+    resize: none;
+}
+
 #movie-info-display {
     width: 85%;
     padding: .8rem;
