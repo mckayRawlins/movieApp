@@ -1,0 +1,99 @@
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+    /*     border: 1px solid salmon; */
+}
+
+body {
+    /* display: flex;
+    justify-content: center;
+    align-items: center; */
+    padding: 5rem;
+    background-image: url(/images/theater.jpg);
+    background-position: center;
+    background-size: cover;
+}
+
+.flex {
+    display: flex;
+}
+
+.fa {
+    text-align: center;
+
+    :hover {
+        cursor: pointer;
+    }
+}
+
+.search {
+    align-items: center;
+}
+
+.display-info {
+    border-radius: .9rem;
+    border: 1px solid gray;
+    background-color: rgb(90, 88, 88, 0.6);
+    backdrop-filter: blur(15px);
+}
+
+a {
+    color: white;
+
+    :visited {
+        color: white;
+    }
+}
+
+
+main {
+    width: 100%;
+    justify-content: space-between;
+}
+
+header {
+    align-items: center;
+    border-bottom: 1px solid gray;
+}
+
+#movie-info-display {
+    width: 85%;
+    padding: .8rem;
+
+    >* {
+        margin-bottom: .5rem;
+    }
+
+    div {
+        padding: .9rem;
+
+        >* {
+            margin-bottom: .5rem;
+        }
+    }
+}
+
+/* #side-nav-parent {
+    align-items: center;
+} */
+
+#side-nav {
+    height: 50%;
+    min-height: 200px;
+    border: 1px solid gray;
+    border-radius: 20px;
+    padding: 1.5rem 0;
+    flex-direction: column;
+    justify-content: space-between;
+    background-color: rgba(90, 88, 88, 0.6);
+    backdrop-filter: blur(15px);
+
+    >a {
+        padding: .5rem;
+    }
+}
+
+#movie-title-display {
+    margin-right: 1.5rem;
+}
