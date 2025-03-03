@@ -5,26 +5,28 @@
     /*     border: 1px solid salmon; */
 }
 
-body {
-    /* display: flex;
-    justify-content: center;
-    align-items: center; */
+.image-div {
     padding: 5rem;
     background-image: url(/images/theater.jpg);
     background-position: center;
     background-size: cover;
 }
 
+.hide {
+    display: none;
+}
+
 .flex {
     display: flex;
 }
 
+.fa:hover,
+button:hover {
+    cursor: pointer;
+}
+
 .fa {
     text-align: center;
-
-    :hover {
-        cursor: pointer;
-    }
 }
 
 .fa-plus,
@@ -32,11 +34,6 @@ body {
     background-color: lightgray;
     border-radius: 50%;
     padding: .5rem;
-}
-
-.fa-plus:hover,
-.fa-search:hover {
-    cursor: pointer;
 }
 
 .search {
@@ -59,7 +56,7 @@ a {
 }
 
 
-main {
+.main {
     width: 100%;
     justify-content: space-between;
 }
@@ -124,4 +121,18 @@ textarea,
 
 #movie-title-display {
     margin-right: 1.5rem;
+}
+
+textarea {
+    margin-right: .9rem;
+}
+
+button {
+    background-color: rgba(240, 240, 240, 0.6);
+    padding: .5rem;
+    border-radius: 5px;
+}
+
+#comments {
+    align-items: end;
 }
