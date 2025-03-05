@@ -10,7 +10,25 @@ class MovieApp {
 
 
 
-    searchClicked() {
+    searchClicked(term) {
+        const API_KEY = 'b41ead9b50fce35c9fb1ff933efbd03c';
+        const query = term;
+        const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&api_key=${API_KEY}`;
+        const searchMoviesInput = this.getElement('search-movies-input');
+        return fetch(url)
+            .then(response => response.json())
+            .then(data => {
+                if (data.results && data.results.length > 0) {
+                    data.results.forEach(movie => {
+                        console.log(`Title: ${movie.title}, Release Date: ${movie.release_date}`);
+                    });
+                } else {
+                    console.log('No movies found.');
+                }
+            })
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
         console.log('searchCLicked');
     }
 
@@ -66,6 +84,35 @@ function getTestMovies() {
         new Movie('Megamind', 'Big head', '2010', 'comedy', '125 min', 'Will Ferrell')
     ];
 }
+
+// class TheMovieDataBaseAPI {
+function search(term) {
+    // Replace 'YOUR_API_KEY' with your actual TMDB API key
+    /* const API_KEY = 'b41ead9b50fce35c9fb1ff933efbd03c';
+    const query = term;
+    const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&api_key=${API_KEY}`;
+
+    return fetch(url)
+        .then(response => response.json())
+        .then(data => {
+            if (data.results && data.results.length > 0) {
+                data.results.forEach(movie => {
+                    console.log(`Title: ${movie.title}, Release Date: ${movie.release_date}`);
+                });
+            } else {
+                console.log('No movies found.');
+            }
+        })
+        .catch(error => {
+            console.error('Error fetching data:', error);
+        }); */
+
+}
+// }
+
+search('Pand').then(movies => {
+    console.log(movies);
+});
 
 const newMovieApp = new MovieApp();
 
