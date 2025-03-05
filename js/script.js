@@ -1,35 +1,68 @@
 class MovieApp {
-    popularMovies = getTestMovies();
+    movies = []; //getTestMovies();
 
     constructor() {
         const search = this.getElement('search');
         search.addEventListener('click', this.searchClicked.bind(this));
 
-        this.displayPopularMovies();
+        this.displayMovies();
     }
 
 
 
-    searchClicked(term) {
+    searchClicked() {
+        this.movies = [];
+        const query = this.getElement('search-movies-input').value;
         const API_KEY = 'b41ead9b50fce35c9fb1ff933efbd03c';
-        const query = term;
         const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&api_key=${API_KEY}`;
-        const searchMoviesInput = this.getElement('search-movies-input');
-        return fetch(url)
+
+        fetch(url)
             .then(response => response.json())
-            .then(data => {
-                if (data.results && data.results.length > 0) {
-                    data.results.forEach(movie => {
-                        console.log(`Title: ${movie.title}, Release Date: ${movie.release_date}`);
+            .then(tmdbMovies => {
+                if (tmdbMovies.results && tmdbMovies.results.length > 0) {
+                    tmdbMovies.results.forEach(tmdbMovie => {
+                        // Finish populating your movie object with the tmdb data.
+                        const movie = new Movie(tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date, 'genre', 'runtime', 'cast');
+                        this.movies.push(movie);
                     });
+
+                    this.displayMovies();
                 } else {
                     console.log('No movies found.');
                 }
             })
+            // .then(fetch('genres')
+            // .then(fetch('cast'))
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
-        console.log('searchCLicked');
+    }
+
+    getMovieDetails(id) {
+        const query = this.getElement('search-movies-input').value;
+        const API_KEY = 'b41ead9b50fce35c9fb1ff933efbd03c';
+        const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&api_key=${API_KEY}`;
+
+        fetch(url)
+            .then(response => response.json())
+            .then(tmdbMovies => {
+                if (tmdbMovies.results && tmdbMovies.results.length > 0) {
+                    tmdbMovies.results.forEach(tmdbMovie => {
+                        // Finish populating your movie object with the tmdb data.
+                        const movie = new Movie(tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date, 'genre', 'runtime', 'cast');
+                        this.movies.push(movie);
+                    });
+
+                    this.displayMovies();
+                } else {
+                    console.log('No movies found.');
+                }
+            })
+            // .then(fetch('genres')
+            // .then(fetch('cast'))
+            .catch(error => {
+                console.error('Error fetching data:', error);
+            });
     }
 
     movieClicked(mouseEvent) {
@@ -37,7 +70,7 @@ class MovieApp {
         const movieTitle = movieLi.textContent;
 
         // Find the movie in the this.popularMovies whose title equals movieTitle
-        const selectedMovie = this.popularMovies.find(movie => movie.title === movieTitle);
+        const selectedMovie = this.movies.find(movie => movie.title === movieTitle);
         this.getElement('movie-title-display').textContent = selectedMovie.title;
 
         this.getElement('movie-title').textContent = selectedMovie.title;
@@ -48,13 +81,14 @@ class MovieApp {
         this.getElement('cast').textContent = selectedMovie.cast;
     }
 
-    displayPopularMovies() {
-        const popularMovieUl = this.getElement('display-movies');
-        this.popularMovies.forEach(movie => {
-            const popularMovieLi = this.createElement('li');
-            popularMovieLi.addEventListener('click', this.movieClicked.bind(this));
-            popularMovieLi.textContent = movie.title;
-            popularMovieUl.appendChild(popularMovieLi);
+    displayMovies() {
+        const displayedMoviesUl = this.getElement('display-movies');
+        displayedMoviesUl.innerHTML = '';
+        this.movies.forEach(movie => {
+            const displayedMovieLi = this.createElement('li');
+            displayedMovieLi.addEventListener('click', this.movieClicked.bind(this));
+            displayedMovieLi.textContent = movie.title;
+            displayedMoviesUl.appendChild(displayedMovieLi);
         });
     }
 
@@ -77,42 +111,15 @@ class Movie {
     }
 }
 
-function getTestMovies() {
+/* function getTestMovies() {
     return [
         new Movie('A New Hope', 'A long time ago...', '1977', 'sci-fi', '120 min', 'Mark Hamill'),
         new Movie('How to Train Your Dragon', 'A boy and his dragon', '2010', 'fantasy', '130 min', 'Jay Baruchel'),
         new Movie('Megamind', 'Big head', '2010', 'comedy', '125 min', 'Will Ferrell')
     ];
-}
+} */
 
-// class TheMovieDataBaseAPI {
-function search(term) {
-    // Replace 'YOUR_API_KEY' with your actual TMDB API key
-    /* const API_KEY = 'b41ead9b50fce35c9fb1ff933efbd03c';
-    const query = term;
-    const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&api_key=${API_KEY}`;
 
-    return fetch(url)
-        .then(response => response.json())
-        .then(data => {
-            if (data.results && data.results.length > 0) {
-                data.results.forEach(movie => {
-                    console.log(`Title: ${movie.title}, Release Date: ${movie.release_date}`);
-                });
-            } else {
-                console.log('No movies found.');
-            }
-        })
-        .catch(error => {
-            console.error('Error fetching data:', error);
-        }); */
-
-}
-// }
-
-search('Pand').then(movies => {
-    console.log(movies);
-});
 
 const newMovieApp = new MovieApp();
 
