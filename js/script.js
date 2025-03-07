@@ -13,6 +13,7 @@ class MovieApp {
     searchClicked() {
         this.movies = [];
         this.getMovieDetails();
+        this.getMovieGenres();
     }
 
     getMovieDetails() {
@@ -50,6 +51,25 @@ class MovieApp {
                 console.error('Error fetching data:', error);
             });
     };
+
+
+    /* getMovieGenres() {
+        const query = this.getElement('search-movies-input').value;
+        const API_KEY = 'b41ead9b50fce35c9fb1ff933efbd03c';
+        const detailsUrl = `https://api.themoviedb.org/3/movie/${query}?api_key=${API_KEY}`;
+
+        fetch(detailsUrl)
+            .then(res => res.json())
+            .then(tmdbGenres => {
+                console.log(tmdbGenres.results)
+                if (tmdbGenres.results && tmdbGenres.results.length > 0) {
+                    tmdbGenres.results.forEach(genre => {
+                        console.log(genre.name);
+                    })
+                }
+            })
+            .catch(err => console.error(err));
+    } */
 
     movieClicked(mouseEvent) {
         const movieLi = mouseEvent.target;
