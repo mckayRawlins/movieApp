@@ -12,58 +12,44 @@ class MovieApp {
 
     searchClicked() {
         this.movies = [];
+        this.getMovieDetails();
+    }
+
+    getMovieDetails() {
         const query = this.getElement('search-movies-input').value;
         const API_KEY = 'b41ead9b50fce35c9fb1ff933efbd03c';
-        const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&api_key=${API_KEY}`;
+        const searchUrl = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&api_key=${API_KEY}`;
 
-        fetch(url)
+
+        fetch(searchUrl)
+            .then(res => res.json())
+            .then(res => console.log(res))
+            .catch(err => console.error(err));
+
+        fetch(searchUrl)
             .then(response => response.json())
             .then(tmdbMovies => {
                 if (tmdbMovies.results && tmdbMovies.results.length > 0) {
                     tmdbMovies.results.forEach(tmdbMovie => {
                         // Finish populating your movie object with the tmdb data.
-                        const movie = new Movie(tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date, 'genre', 'runtime', 'cast');
+                        console.log(tmdbMovie.id);
+                        const movie = new Movie(tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date, tmdbMovie.genre_ids, 'runtime', 'cast');
                         this.movies.push(movie);
                     });
 
                     this.displayMovies();
                 } else {
+                    const displayedMoviesUl = this.getElement('display-movies');
+                    displayedMoviesUl.innerHTML = '<li>No movies found</li>';
                     console.log('No movies found.');
                 }
             })
-            // .then(fetch('genres')
+            // .then(fetch('genres'z)
             // .then(fetch('cast'))
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
-    }
-
-    getMovieDetails(id) {
-        const query = this.getElement('search-movies-input').value;
-        const API_KEY = 'b41ead9b50fce35c9fb1ff933efbd03c';
-        const url = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&api_key=${API_KEY}`;
-
-        fetch(url)
-            .then(response => response.json())
-            .then(tmdbMovies => {
-                if (tmdbMovies.results && tmdbMovies.results.length > 0) {
-                    tmdbMovies.results.forEach(tmdbMovie => {
-                        // Finish populating your movie object with the tmdb data.
-                        const movie = new Movie(tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date, 'genre', 'runtime', 'cast');
-                        this.movies.push(movie);
-                    });
-
-                    this.displayMovies();
-                } else {
-                    console.log('No movies found.');
-                }
-            })
-            // .then(fetch('genres')
-            // .then(fetch('cast'))
-            .catch(error => {
-                console.error('Error fetching data:', error);
-            });
-    }
+    };
 
     movieClicked(mouseEvent) {
         const movieLi = mouseEvent.target;
