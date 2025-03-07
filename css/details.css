@@ -5,6 +5,10 @@
   /*     border: 1px solid salmon; */
 }
 
+body {
+  color: white;
+}
+
 .image-div {
   padding: 5rem;
   background-image: url(/images/theater.jpg);
