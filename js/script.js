@@ -1,13 +1,27 @@
 import { MOVIE_API_KEY } from "../variables.js";
 
 class MovieApp {
-
     constructor() {
         const search = this.getElement('search');
         search.addEventListener('click', this.searchClicked.bind(this));
+        const saveMovieButton = this.getElement('save-movie');
+        saveMovieButton.addEventListener('click', this.addToSavedMovies.bind(this));
+        const favoriteMovieButton = this.getElement('favorite-movie');
+        favoriteMovieButton.addEventListener('click', this.addToFavoriteMovies.bind(this));
+
         this.movies = [];
-        this.movieDetails = {};
+        this.savedMovies = [];
+        this.favoriteMovies = [];
+
         this.displayMovies();
+    }
+
+    addToSavedMovies() {
+        console.log('movie saved');
+    }
+
+    addToFavoriteMovies() {
+        console.log('favorited movie');
     }
 
     searchClicked() {
@@ -21,24 +35,25 @@ class MovieApp {
 
         return fetch(searchUrl)
             .then(response => response.json())
-            .then(tmdbMovies => {
-                if (tmdbMovies.results && tmdbMovies.results.length > 0) {
-                    tmdbMovies.results.forEach(tmdbMovie => {
-                        const movie = new Movie(tmdbMovie.id, tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date);
-                        this.movies.push(movie);
-                    });
-
-                    this.displayMovies();
-                } else {
-                    const displayedMoviesUl = this.getElement('display-movies');
-                    displayedMoviesUl.innerHTML = '<li>No movies found</li>';
-                }
-            })
+            .then(this.populateMovies.bind(this))
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
-
     };
+
+    populateMovies(tmdbMovies) {
+        if (tmdbMovies.results && tmdbMovies.results.length > 0) {
+            tmdbMovies.results.forEach(tmdbMovie => {
+                const movie = new Movie(tmdbMovie.id, tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date);
+                this.movies.push(movie);
+            });
+
+            this.displayMovies();
+        } else {
+            const displayedMoviesUl = this.getElement('display-movies');
+            displayedMoviesUl.innerHTML = '<li>No movies found</li>';
+        }
+    }
 
     movieClicked(mouseEvent) {
         this.getGenres(mouseEvent.target.movie).then(this.getCredits.bind(this));
@@ -46,6 +61,7 @@ class MovieApp {
 
     getGenres(movie) {
         const genresUrl = `https://api.themoviedb.org/3/movie/${movie.id}?api_key=${MOVIE_API_KEY}`;
+
         return fetch(genresUrl)
             .then(reponse => reponse.json())
             .then(genresData => {
