@@ -10,43 +10,30 @@ class MovieApp {
         this.displayMovies();
     }
 
-
-
     searchClicked() {
         this.movies = [];
         this.getMovieDetails();
-        /* this.getMovieGenres(); */
     }
 
     getMovieDetails() {
         const query = this.getElement('search-movies-input').value;
         const searchUrl = `https://api.themoviedb.org/3/search/movie?query=${encodeURIComponent(query)}&api_key=${MOVIE_API_KEY}`;
 
-
-        fetch(searchUrl)
+        return fetch(searchUrl)
             .then(response => response.json())
             .then(tmdbMovies => {
                 if (tmdbMovies.results && tmdbMovies.results.length > 0) {
                     tmdbMovies.results.forEach(tmdbMovie => {
                         const movie = new Movie(tmdbMovie.id, tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date);
-                        if (!this.movieDetails[tmdbMovie.id]) {
-                            this.movieDetails[tmdbMovie.id] = movie;
-                        }
-
                         this.movies.push(movie);
-
-
                     });
 
                     this.displayMovies();
                 } else {
                     const displayedMoviesUl = this.getElement('display-movies');
                     displayedMoviesUl.innerHTML = '<li>No movies found</li>';
-                    console.log('No movies found.');
                 }
             })
-            // .then(fetch('genres'z)
-            // .then(fetch('cast'))
             .catch(error => {
                 console.error('Error fetching data:', error);
             });
@@ -54,31 +41,39 @@ class MovieApp {
     };
 
     movieClicked(mouseEvent) {
-        const movieLi = mouseEvent.target;
-        const detailsUrl = `https://api.themoviedb.org/3/movie/${movieLi.id}?api_key=${MOVIE_API_KEY}`;
+        this.getGenres(mouseEvent.target.movie).then(this.getCredits.bind(this));
+    }
 
-        console.log(movieLi.id);
-        //if (!movieLi.id) {
-        fetch(detailsUrl)
+    getGenres(movie) {
+        const genresUrl = `https://api.themoviedb.org/3/movie/${movie.id}?api_key=${MOVIE_API_KEY}`;
+        return fetch(genresUrl)
             .then(reponse => reponse.json())
-
-            .then(detailsData => {
-                //fetch cast
-                console.log(detailsData);
-                const selectedMovie = this.movieDetails[detailsData.id];
-                selectedMovie.update(detailsData);
-                this.getElement('movie-title-display').textContent = selectedMovie.title;
-
-                this.getElement('movie-title').textContent = selectedMovie.title;
-                this.getElement('movie-description').textContent = selectedMovie.description;
-                this.getElement('release-date').textContent = selectedMovie.releaseDate;
-                this.getElement('movie-genre').textContent = selectedMovie.genres.map(genre => genre.name).join(',  ');
-                this.getElement('runtime').textContent = selectedMovie.runtime;
-                this.getElement('cast').textContent = selectedMovie.cast;
+            .then(genresData => {
+                movie.genres = genresData.genres;
+                movie.runtime = genresData.runtime;
+                return movie;
             });
-        // }
-        // Find the movie in the this.popularMovies whose title equals movieTitle
+    }
 
+    getCredits(movie) {
+        const creditsUrl = `https://api.themoviedb.org/3/movie/${movie.id}/credits?api_key=${MOVIE_API_KEY}`;
+
+        return fetch(creditsUrl)
+            .then(creditsResponse => creditsResponse.json())
+            .then(creditsData => {
+                movie.cast = creditsData.cast;
+                this.updateMovieDetails(movie);
+            });
+    }
+
+    updateMovieDetails(movie) {
+        this.getElement('movie-title-display').textContent = movie.title;
+        this.getElement('movie-title').textContent = movie.title;
+        this.getElement('movie-description').textContent = movie.description;
+        this.getElement('release-date').textContent = movie.releaseDate;
+        this.getElement('movie-genre').textContent = movie.genres.map(genre => genre.name).join(',  ');
+        this.getElement('runtime').textContent = movie.runtime;
+        this.getElement('cast').textContent = movie.cast.map(actor => actor.name).slice(0, 8).join(',  ');
     }
 
     displayMovies() {
@@ -86,7 +81,7 @@ class MovieApp {
         displayedMoviesUl.innerHTML = '';
         this.movies.forEach(movie => {
             const displayedMovieLi = this.createElement('li');
-            displayedMovieLi.id = movie.id;
+            displayedMovieLi.movie = movie;
             displayedMovieLi.addEventListener('click', this.movieClicked.bind(this));
             displayedMovieLi.textContent = movie.title;
             displayedMoviesUl.appendChild(displayedMovieLi);
@@ -111,23 +106,7 @@ class Movie {
         this.runtime = runtime;
         this.cast = cast;
     }
-
-    update(data) {
-        console.log(data);
-        this.genres = data.genres;
-        this.runtime = data.runtime;
-    }
 }
-
-/* function getTestMovies() {
-    return [
-        new Movie('A New Hope', 'A long time ago...', '1977', 'sci-fi', '120 min', 'Mark Hamill'),
-        new Movie('How to Train Your Dragon', 'A boy and his dragon', '2010', 'fantasy', '130 min', 'Jay Baruchel'),
-        new Movie('Megamind', 'Big head', '2010', 'comedy', '125 min', 'Will Ferrell')
-    ];
-} */
-
-
 
 const newMovieApp = new MovieApp();
 
