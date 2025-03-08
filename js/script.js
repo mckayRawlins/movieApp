@@ -10,14 +10,16 @@ class MovieApp {
         favoriteMovieButton.addEventListener('click', this.addToFavoriteMovies.bind(this));
 
         this.movies = [];
+        this.selectedMovie = null;
         this.savedMovies = [];
         this.favoriteMovies = [];
 
-        this.displayMovies();
+        this.renderSearchedMovies();
     }
 
     addToSavedMovies() {
-        console.log('movie saved');
+        this.savedMovies.push(this.selectedMovie);
+        this.renderDisplay();
     }
 
     addToFavoriteMovies() {
@@ -48,7 +50,7 @@ class MovieApp {
                 this.movies.push(movie);
             });
 
-            this.displayMovies();
+            this.renderSearchedMovies();
         } else {
             const displayedMoviesUl = this.getElement('display-movies');
             displayedMoviesUl.innerHTML = '<li>No movies found</li>';
@@ -56,7 +58,8 @@ class MovieApp {
     }
 
     movieClicked(mouseEvent) {
-        this.getGenres(mouseEvent.target.movie).then(this.getCredits.bind(this));
+        this.selectedMovie = mouseEvent.target.movie;
+        this.getGenres(this.selectedMovie).then(this.getCredits.bind(this));
     }
 
     getGenres(movie) {
@@ -78,11 +81,11 @@ class MovieApp {
             .then(creditsResponse => creditsResponse.json())
             .then(creditsData => {
                 movie.cast = creditsData.cast;
-                this.updateMovieDetails(movie);
+                this.renderMovieDetails(movie);
             });
     }
 
-    updateMovieDetails(movie) {
+    renderMovieDetails(movie) {
         this.getElement('movie-title-display').textContent = movie.title;
         this.getElement('movie-title').textContent = movie.title;
         this.getElement('movie-description').textContent = movie.description;
@@ -92,7 +95,7 @@ class MovieApp {
         this.getElement('cast').textContent = movie.cast.map(actor => actor.name).slice(0, 8).join(',  ');
     }
 
-    displayMovies() {
+    renderSearchedMovies() {
         const displayedMoviesUl = this.getElement('display-movies');
         displayedMoviesUl.innerHTML = '';
         this.movies.forEach(movie => {
@@ -102,6 +105,18 @@ class MovieApp {
             displayedMovieLi.textContent = movie.title;
             displayedMoviesUl.appendChild(displayedMovieLi);
         });
+    }
+
+    renderDisplay() {
+        const savedMoviesUl = this.getElement('saved-movies-ul');
+        this.savedMovies.forEach(movie => {
+            const savedMoviesLi = document.createElement('li');
+            savedMoviesLi.movie = movie;
+            savedMoviesLi.textContent = movie.title;
+            savedMoviesUl.appendChild(savedMoviesLi);
+        });
+
+        // render favorited movies
     }
 
     getElement(id) {
