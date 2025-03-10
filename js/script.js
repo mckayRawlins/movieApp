@@ -46,7 +46,7 @@ class MovieApp {
     populateMovies(tmdbMovies) {
         if (tmdbMovies.results && tmdbMovies.results.length > 0) {
             tmdbMovies.results.forEach(tmdbMovie => {
-                const movie = new Movie(tmdbMovie.id, tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date);
+                const movie = new Movie(tmdbMovie.id, tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date, "genres", 'runtime', 'cast', tmdbMovie.poster_path);
                 this.movies.push(movie);
             });
 
@@ -57,8 +57,8 @@ class MovieApp {
         }
     }
 
-    movieClicked(mouseEvent) {
-        this.selectedMovie = mouseEvent.target.movie;
+    movieClicked(movie) {
+        this.selectedMovie = movie;
         this.getGenres(this.selectedMovie).then(this.getCredits.bind(this));
     }
 
@@ -100,9 +100,9 @@ class MovieApp {
         displayedMoviesUl.innerHTML = '';
         this.movies.forEach(movie => {
             const displayedMovieLi = this.createElement('li');
-            displayedMovieLi.movie = movie;
-            displayedMovieLi.addEventListener('click', this.movieClicked.bind(this));
-            displayedMovieLi.textContent = movie.title;
+            displayedMovieLi.addEventListener('click', () => this.movieClicked(movie));
+            const posterURL = `<div><img src="https://image.tmdb.org/t/p/w92${movie.posterPath}"><span>${movie.title}</span></div>`;
+            displayedMovieLi.innerHTML = posterURL;
             displayedMoviesUl.appendChild(displayedMovieLi);
         });
     }
@@ -128,7 +128,7 @@ class MovieApp {
 }
 
 class Movie {
-    constructor(id, title, description, releaseDate, genres = [], runtime, cast) {
+    constructor(id, title, description, releaseDate, genres = [], runtime, cast, posterPath) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -136,6 +136,7 @@ class Movie {
         this.genres = genres;
         this.runtime = runtime;
         this.cast = cast;
+        this.posterPath = posterPath;
     }
 }
 
