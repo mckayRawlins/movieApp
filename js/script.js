@@ -86,6 +86,7 @@ class MovieApp {
     }
 
     renderMovieDetails(movie) {
+        this.getElement('movie-poster').innerHTML = `<img src="https://image.tmdb.org/t/p/w185${movie.posterPath}"></img>`
         this.getElement('movie-title-display').textContent = movie.title;
         this.getElement('movie-title').textContent = movie.title;
         this.getElement('movie-description').textContent = movie.description;
@@ -101,14 +102,19 @@ class MovieApp {
         this.movies.forEach(movie => {
             const displayedMovieLi = this.createElement('li');
             displayedMovieLi.addEventListener('click', () => this.movieClicked(movie));
-            const posterURL = `<div><img src="https://image.tmdb.org/t/p/w92${movie.posterPath}"><span>${movie.title}</span></div>`;
-            displayedMovieLi.innerHTML = posterURL;
+            if (movie.posterPath !== null) {
+                const posterURL = `<div><img src="https://image.tmdb.org/t/p/w92${movie.posterPath}"><span>${movie.title}</span></div>`;
+                displayedMovieLi.innerHTML = posterURL;
+            } else {
+                displayedMovieLi.innerHTML = `<div class="null-image">no image found</div><span>${movie.title}</span>`;
+            }
             displayedMoviesUl.appendChild(displayedMovieLi);
         });
     }
 
     renderDisplay() {
         const savedMoviesUl = this.getElement('saved-movies-ul');
+        savedMoviesUl.innerHTML = '';
         this.savedMovies.forEach(movie => {
             const savedMoviesLi = document.createElement('li');
             savedMoviesLi.movie = movie;

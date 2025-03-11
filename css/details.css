@@ -5,6 +5,10 @@
   /*     border: 1px solid salmon; */
 }
 
+html {
+  font-family: sans-serif;
+}
+
 body {
   color: white;
 }
@@ -119,6 +123,16 @@ textarea,
   padding: 0.5rem;
 }
 
+#display-movies {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+}
+#display-movies li {
+  list-style-type: none;
+  display: flex;
+  flex-direction: column;
+}
+
 #movie-title-display {
   margin-right: 1.5rem;
 }
@@ -135,4 +149,10 @@ button {
 
 #comments {
   align-items: end;
+}
+
+.null-image {
+  width: 92px;
+  height: 140px;
+  background-color: black;
 }/*# sourceMappingURL=details.css.map */
