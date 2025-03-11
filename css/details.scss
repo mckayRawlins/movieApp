@@ -128,14 +128,15 @@ textarea,
     }
 }
 
-#display-movies {
+#display-movies,
+#saved-movies-ul,
+#favorited-movies-ul {
     display: grid;
     grid-template-columns: repeat(4, 1fr);
 
     li {
         list-style-type: none;
-        display: flex;
-        flex-direction: column;
+
 
         :hover {
             cursor: pointer;
@@ -163,6 +164,6 @@ button {
 
 .null-image {
     width: 92px;
-    height: 140px;
+    height: 138px;
     background-color: black;
 }

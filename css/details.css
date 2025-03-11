@@ -123,16 +123,20 @@ textarea,
   padding: 0.5rem;
 }
 
-#display-movies {
+#display-movies,
+#saved-movies-ul,
+#favorited-movies-ul {
   display: grid;
   grid-template-columns: repeat(4, 1fr);
 }
-#display-movies li {
+#display-movies li,
+#saved-movies-ul li,
+#favorited-movies-ul li {
   list-style-type: none;
-  display: flex;
-  flex-direction: column;
 }
-#display-movies li :hover {
+#display-movies li :hover,
+#saved-movies-ul li :hover,
+#favorited-movies-ul li :hover {
   cursor: pointer;
 }
 
@@ -156,6 +160,6 @@ button {
 
 .null-image {
   width: 92px;
-  height: 140px;
+  height: 138px;
   background-color: black;
 }/*# sourceMappingURL=details.css.map */

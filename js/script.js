@@ -143,7 +143,7 @@ class MovieApp {
         this.savedMovies.forEach(movie => {
             const savedMoviesLi = document.createElement('li');
             savedMoviesLi.movie = movie;
-            savedMoviesLi.textContent = movie.title;
+            savedMoviesLi.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${movie.posterPath}"><span>${movie.title}</span>`;
             savedMoviesUl.appendChild(savedMoviesLi);
         });
 
@@ -152,7 +152,7 @@ class MovieApp {
         this.favoriteMovies.forEach(movie => {
             const favoritedMoviesLi = document.createElement('li');
             favoritedMoviesLi.movie = movie;
-            favoritedMoviesLi.textContent = movie.title;
+            favoritedMoviesLi.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${movie.posterPath}"><span>${movie.title}</span>`;
             favoritedMoviesUl.appendChild(favoritedMoviesLi);
         })
     }
