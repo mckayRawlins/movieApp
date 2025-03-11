@@ -2,7 +2,7 @@
     box-sizing: border-box;
     margin: 0;
     padding: 0;
-    /*     border: 1px solid salmon; */
+    /*border: 1px solid salmon;*/
 }
 
 html {
@@ -132,11 +132,13 @@ textarea,
 #saved-movies-ul,
 #favorited-movies-ul {
     display: grid;
-    grid-template-columns: repeat(4, 1fr);
+    grid-template-columns: repeat(5, 1fr);
+    gap: 20px;
+    align-items: center;
 
     li {
         list-style-type: none;
-
+        max-width: 138px;
 
         :hover {
             cursor: pointer;

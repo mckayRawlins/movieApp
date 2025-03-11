@@ -128,10 +128,10 @@ class MovieApp {
             const displayedMovieLi = this.createElement('li');
             displayedMovieLi.addEventListener('click', () => this.movieClicked(movie));
             if (movie.posterPath !== null) {
-                const posterURL = `<div><img src="https://image.tmdb.org/t/p/w92${movie.posterPath}"><span>${movie.title}</span></div>`;
+                const posterURL = `<div><img src="https://image.tmdb.org/t/p/w92${movie.posterPath}"><br><span>${movie.title}</span></div>`;
                 displayedMovieLi.innerHTML = posterURL;
             } else {
-                displayedMovieLi.innerHTML = `<div class="null-image">no image found</div><span>${movie.title}</span>`;
+                displayedMovieLi.innerHTML = `<div class="null-image">no image found</div><br><span>${movie.title}</span>`;
             }
             displayedMoviesUl.appendChild(displayedMovieLi);
         });
@@ -143,7 +143,7 @@ class MovieApp {
         this.savedMovies.forEach(movie => {
             const savedMoviesLi = document.createElement('li');
             savedMoviesLi.movie = movie;
-            savedMoviesLi.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${movie.posterPath}"><span>${movie.title}</span>`;
+            savedMoviesLi.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${movie.posterPath}"><br><span>${movie.title}</span>`;
             savedMoviesUl.appendChild(savedMoviesLi);
         });
 
@@ -152,7 +152,7 @@ class MovieApp {
         this.favoriteMovies.forEach(movie => {
             const favoritedMoviesLi = document.createElement('li');
             favoritedMoviesLi.movie = movie;
-            favoritedMoviesLi.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${movie.posterPath}"><span>${movie.title}</span>`;
+            favoritedMoviesLi.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${movie.posterPath}"><br><span>${movie.title}</span>`;
             favoritedMoviesUl.appendChild(favoritedMoviesLi);
         })
     }
