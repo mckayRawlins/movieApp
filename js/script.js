@@ -18,12 +18,37 @@ class MovieApp {
     }
 
     addToSavedMovies() {
-        this.savedMovies.push(this.selectedMovie);
-        this.renderDisplay();
+        let alreadySaved = false;
+
+        for (let i = 0; i < this.savedMovies.length; i++) {
+            if (this.selectedMovie.id === this.savedMovies[i].id) {
+                alreadySaved = true;
+                console.log('movie already saved');
+                break;
+            }
+        }
+
+        if (alreadySaved === false) {
+            this.savedMovies.push(this.selectedMovie);
+            this.renderDisplay();
+        }
     }
 
     addToFavoriteMovies() {
-        console.log('favorited movie');
+        let alreadyFavorited = false;
+
+        for (let i = 0; i < this.favoriteMovies.length; i++) {
+            if (this.selectedMovie.id === this.favoriteMovies[i].id) {
+                alreadyFavorited = true;
+                console.log('movied already added to favorites');
+                break;
+            }
+        }
+
+        if (alreadyFavorited === false) {
+            this.favoriteMovies.push(this.selectedMovie);
+            this.renderDisplay();
+        }
     }
 
     searchClicked() {
@@ -122,7 +147,14 @@ class MovieApp {
             savedMoviesUl.appendChild(savedMoviesLi);
         });
 
-        // render favorited movies
+        const favoritedMoviesUl = this.getElement('favorited-movies-ul');
+        favoritedMoviesUl.innerHTML = '';
+        this.favoriteMovies.forEach(movie => {
+            const favoritedMoviesLi = document.createElement('li');
+            favoritedMoviesLi.movie = movie;
+            favoritedMoviesLi.textContent = movie.title;
+            favoritedMoviesUl.appendChild(favoritedMoviesLi);
+        })
     }
 
     getElement(id) {

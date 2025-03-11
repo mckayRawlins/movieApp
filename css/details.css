@@ -132,6 +132,9 @@ textarea,
   display: flex;
   flex-direction: column;
 }
+#display-movies li :hover {
+  cursor: pointer;
+}
 
 #movie-title-display {
   margin-right: 1.5rem;
