@@ -15,6 +15,25 @@ class MovieApp {
         this.favoriteMovies = [];
 
         this.renderSearchedMovies();
+        this.renderPopularMovies();
+    }
+
+    renderPopularMovies() {
+        const displayMoviesUl = this.getElement('display-movies');
+        const popularMoviesUrl = `https://api.themoviedb.org/3/movie/popular?api_key=${MOVIE_API_KEY}&language=en-US&page=1`;
+
+        return fetch(popularMoviesUrl)
+            .then(response => response.json())
+            .then(popularData => {
+                popularData.results.forEach(movie => {
+                    const displayMovieLi = document.createElement('li');
+                    displayMovieLi.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${movie.poster_path}"><br><span>${movie.title}</span>`
+                    displayMoviesUl.appendChild(displayMovieLi);
+                    this.movies.push(movie);
+
+                })
+                console.log(this.movies)
+            })
     }
 
     addToSavedMovies() {
@@ -73,7 +92,11 @@ class MovieApp {
             tmdbMovies.results.forEach(tmdbMovie => {
                 const movie = new Movie(tmdbMovie.id, tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date, "genres", 'runtime', 'cast', tmdbMovie.poster_path);
                 this.movies.push(movie);
+
             });
+            const displayedMoviesH2 = this.getElement('display-movies-h2');
+            const query = this.getElement('search-movies-input').value;
+            displayedMoviesH2.textContent = `Search results for "${query}"`;
 
             this.renderSearchedMovies();
         } else {
@@ -114,11 +137,11 @@ class MovieApp {
         this.getElement('movie-poster').innerHTML = `<img src="https://image.tmdb.org/t/p/w185${movie.posterPath}"></img>`
         this.getElement('movie-title-display').textContent = movie.title;
         this.getElement('movie-title').textContent = movie.title;
-        this.getElement('movie-description').textContent = movie.description;
-        this.getElement('release-date').textContent = movie.releaseDate;
-        this.getElement('movie-genre').textContent = movie.genres.map(genre => genre.name).join(',  ');
-        this.getElement('runtime').textContent = movie.runtime;
-        this.getElement('cast').textContent = movie.cast.map(actor => actor.name).slice(0, 8).join(',  ');
+        this.getElement('movie-description').textContent = `Description: ${movie.description}`;
+        this.getElement('release-date').textContent = `Release date: ${movie.releaseDate}`;
+        this.getElement('movie-genre').textContent = `Genres: ${movie.genres.map(genre => genre.name).join(',  ')}`;
+        this.getElement('runtime').textContent = `Runtime: ${movie.runtime} minutes`;
+        this.getElement('cast').textContent = `Main cast: ${movie.cast.map(actor => actor.name).slice(0, 8).join(',  ')}`;
     }
 
     renderSearchedMovies() {
