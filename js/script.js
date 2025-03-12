@@ -26,10 +26,12 @@ class MovieApp {
             .then(response => response.json())
             .then(popularData => {
                 popularData.results.forEach(movie => {
+                    const popularMovie = new Movie(movie.id, movie.title, movie.overview, movie.release_date, "genres", 'runtime', 'cast', movie.poster_path);
                     const displayMovieLi = document.createElement('li');
-                    displayMovieLi.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${movie.poster_path}"><br><span>${movie.title}</span>`
+                    displayMovieLi.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${popularMovie.posterPath}"><br><span>${popularMovie.title}</span>`
+                    displayMovieLi.addEventListener('click', () => this.movieClicked(popularMovie));
                     displayMoviesUl.appendChild(displayMovieLi);
-                    this.movies.push(movie);
+                    this.movies.push(popularMovie);
 
                 })
                 console.log(this.movies)
