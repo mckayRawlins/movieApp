@@ -15,7 +15,7 @@ body {
 
 .image-div {
   padding: 5rem;
-  background-image: url(/image/theater.jpg);
+  background-image: url(theater.jpg);
   background-position: center;
   background-size: cover;
   background-color: black;
