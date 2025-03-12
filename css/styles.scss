@@ -15,7 +15,7 @@ body {
 
 .image-div {
     padding: 5rem;
-    background-image: url(./images/theater.jpg);
+    background-image: url(/image/theater.jpg);
     background-position: center;
     background-size: cover;
     background-color: black;
@@ -135,7 +135,6 @@ textarea,
     display: grid;
     grid-template-columns: repeat(5, 1fr);
     gap: 20px;
-    align-items: center;
 
     li {
         list-style-type: none;
