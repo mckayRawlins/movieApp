@@ -29,6 +29,11 @@ body {
   display: flex;
 }
 
+.fa-home,
+.fa-play-circle {
+  font-size: 1.5rem;
+}
+
 .fa:hover,
 button:hover {
   cursor: pointer;
@@ -119,6 +124,8 @@ textarea,
   background-color: rgba(90, 88, 88, 0.6);
   -webkit-backdrop-filter: blur(15px);
           backdrop-filter: blur(15px);
+  position: sticky;
+  top: 5rem;
 }
 #side-nav > a {
   padding: 0.5rem;
@@ -161,6 +168,17 @@ button {
   align-items: end;
 }
 
+#comments-ul {
+  width: 60%;
+  max-height: 300px;
+  overflow: auto;
+}
+#comments-ul li {
+  list-style: none;
+  margin-bottom: 1.5rem;
+  border-bottom: 1px solid lightgray;
+}
+
 .null-image {
   width: 92px;
   height: 138px;
@@ -171,4 +189,23 @@ button {
   width: 185px;
   height: 278px;
   background-color: black;
+}
+
+@media only screen and (max-width: 1366px) {
+  #display-movies,
+  #saved-movies-ul,
+  #favorited-movies-ul {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+  }
+}
+@media only screen and (max-width: 819px) {
+  #display-movies,
+  #saved-movies-ul,
+  #favorited-movies-ul {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 20px;
+  }
 }/*# sourceMappingURL=styles.css.map */

@@ -16,6 +16,7 @@ class MovieApp {
 
         this.renderSearchedMovies();
         this.renderPopularMovies();
+        this.leaveComments();
     }
 
     renderPopularMovies() {
@@ -70,8 +71,24 @@ class MovieApp {
     }
 
     leaveComments() {
+        let comments = [];
         const commentsInput = this.getElement('comments-input');
         const commentsUl = this.getElement('comments-ul');
+        const postComment = this.getElement('post-comment');
+
+        postComment.addEventListener('click', () => {
+            commentsUl.innerHTML = '';
+            const newComment = commentsInput.value;
+            comments.push(newComment);
+            console.log(comments);
+            comments.forEach(comment => {
+                const postedComment = document.createElement('li');
+                postedComment.textContent = comment;
+                commentsUl.appendChild(postedComment);
+            })
+            commentsInput.value = '';
+        })
+
     }
 
     searchClicked() {
