@@ -20,21 +20,35 @@ class MovieApp {
 
     save() {
         localStorage.setItem('saved-movies', JSON.stringify(this.savedMovies));
+        localStorage.setItem('favorite-movies', JSON.stringify(this.favoriteMovies));
 
+        /* savedComments = {
+            movieId: 548454,
+            comments: []
+        } */
+
+        // When the user saves a comment, store the selected movie id and the comment in an
+        // object to local storage. 
     }
 
     load() {
         const savedMoviesStorage = localStorage.getItem('saved-movies');
+        const favoriteMovieStorage = localStorage.getItem('favorite-movies');
 
         if (savedMoviesStorage === null) {
             return;
         }
+        if (favoriteMovieStorage === null) {
+            return;
+        }
+
         this.savedMovies = JSON.parse(localStorage.getItem('saved-movies'));
+        this.favoriteMovies = JSON.parse(localStorage.getItem('favorite-movies'));
     }
 
-    renderMainContent() {
+    /* renderMainContent() {
         const dynamicDisplay = this.getElement('dynamic-display');
-    }
+    } */
 
     renderPopularMovies() {
         const displayMoviesUl = this.getElement('display-movies');
@@ -56,37 +70,29 @@ class MovieApp {
     }
 
     addToSavedMovies() {
-        let alreadySaved = false;
-
-        for (let i = 0; i < this.savedMovies.length; i++) {
-            if (this.selectedMovie.id === this.savedMovies[i].id) {
-                alreadySaved = true;
-                break;
-            }
-        }
-
-        if (alreadySaved === false) {
-            this.savedMovies.push(this.selectedMovie);
-            this.renderDisplay();
-        }
-        console.log(this.savedMovies);
-        this.save();
+        this.storeMovies(this.savedMovies);
     }
 
     addToFavoriteMovies() {
+        this.storeMovies(this.favoriteMovies);
+    }
+
+
+    storeMovies(storedMovies) {
         let alreadyFavorited = false;
 
-        for (let i = 0; i < this.favoriteMovies.length; i++) {
-            if (this.selectedMovie.id === this.favoriteMovies[i].id) {
+        for (let i = 0; i < storedMovies.length; i++) {
+            if (this.selectedMovie.id === storedMovies[i].id) {
                 alreadyFavorited = true;
                 break;
             }
         }
 
         if (alreadyFavorited === false) {
-            this.favoriteMovies.push(this.selectedMovie);
+            storedMovies.push(this.selectedMovie);
             this.renderDisplay();
         }
+        this.save();
     }
 
     searchClicked() {
