@@ -34,7 +34,6 @@ class MovieApp {
                     this.movies.push(popularMovie);
 
                 })
-                console.log(this.movies)
             })
     }
 
@@ -44,7 +43,6 @@ class MovieApp {
         for (let i = 0; i < this.savedMovies.length; i++) {
             if (this.selectedMovie.id === this.savedMovies[i].id) {
                 alreadySaved = true;
-                console.log('movie already saved');
                 break;
             }
         }
@@ -61,7 +59,6 @@ class MovieApp {
         for (let i = 0; i < this.favoriteMovies.length; i++) {
             if (this.selectedMovie.id === this.favoriteMovies[i].id) {
                 alreadyFavorited = true;
-                console.log('movied already added to favorites');
                 break;
             }
         }
@@ -70,6 +67,11 @@ class MovieApp {
             this.favoriteMovies.push(this.selectedMovie);
             this.renderDisplay();
         }
+    }
+
+    leaveComments() {
+        const commentsInput = this.getElement('comments-input');
+        const commentsUl = this.getElement('comments-ul');
     }
 
     searchClicked() {
@@ -92,7 +94,7 @@ class MovieApp {
     populateMovies(tmdbMovies) {
         if (tmdbMovies.results && tmdbMovies.results.length > 0) {
             tmdbMovies.results.forEach(tmdbMovie => {
-                const movie = new Movie(tmdbMovie.id, tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date, "genres", 'runtime', 'cast', tmdbMovie.poster_path);
+                const movie = new Movie(tmdbMovie.id, tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date, "genres", 'runtime', 'cast', tmdbMovie.poster_path, 'trailer');
                 this.movies.push(movie);
 
             });
@@ -109,7 +111,57 @@ class MovieApp {
 
     movieClicked(movie) {
         this.selectedMovie = movie;
-        this.getGenres(this.selectedMovie).then(this.getCredits.bind(this));
+        this.getGenres(this.selectedMovie).then(this.getCredits.bind(this)).then(this.getTrailer(this.selectedMovie));
+    }
+
+    getTrailer(movie) {
+        const trailerUrl = `https://api.themoviedb.org/3/movie/${movie.id}/videos?api_key=${MOVIE_API_KEY}&language=en-US`;
+        const trailerContainer = this.getElement('trailer-container');
+
+        return fetch(trailerUrl)
+            .then(response => response.json())
+            .then(videoData => {
+                if (videoData.results.length > 0) {
+                    const trailers = videoData.results.filter(video => video.type === "Trailer");
+                    if (trailers.length > 0) {
+                        const displayedTrailer = trailers[0];
+                        const trailerKey = displayedTrailer.key;
+                        const trailerSite = displayedTrailer.site;
+                        this.renderTrailer(trailerKey, trailerSite);
+                    }
+                } else {
+                    trailerContainer.innerHTML = `<span>No trailer found</span>`;
+                }
+            })
+    }
+
+    renderTrailer(trailerKey, trailerSite) {
+        const trailerContainer = this.getElement('trailer-container');
+
+        trailerContainer.innerHTML = '';
+
+        if (!trailerKey || !trailerSite) {
+            trailerContainer.innerHTML = `<span>No trailer found</span>`;
+        }
+
+        let embedUrl = '';
+        if (trailerSite.toLowerCase() === 'youtube') {
+            embedUrl = `https://www.youtube.com/embed/${trailerKey}`;
+        } else if (trailerSite.toLowerCase() === 'vimeo') {
+            embedUrl = `https://www.vimeo.com/embed/${trailerKey}`;
+        } else {
+            trailerContainer.textContent = 'trailer site unsupported';
+            return;
+        }
+
+        const iframe = document.createElement('iframe');
+        iframe.src = embedUrl;
+        iframe.width = 560;
+        iframe.height = 315;
+
+
+        trailerContainer.appendChild(iframe);
+
     }
 
     getGenres(movie) {
@@ -136,7 +188,12 @@ class MovieApp {
     }
 
     renderMovieDetails(movie) {
-        this.getElement('movie-poster').innerHTML = `<img src="https://image.tmdb.org/t/p/w185${movie.posterPath}"></img>`
+        const moviePoster = this.getElement('movie-poster');
+        if (movie.posterPath !== null) {
+            moviePoster.innerHTML = `<img src="https://image.tmdb.org/t/p/w185${movie.posterPath}"></img>`;
+        } else {
+            moviePoster.innerHTML = `<div class="null-image2">no image found</div><br><span>${movie.title}</span>`;
+        }
         this.getElement('movie-title-display').textContent = movie.title;
         this.getElement('movie-title').textContent = movie.title;
         this.getElement('movie-description').textContent = `Description: ${movie.description}`;
@@ -144,6 +201,7 @@ class MovieApp {
         this.getElement('movie-genre').textContent = `Genres: ${movie.genres.map(genre => genre.name).join(',  ')}`;
         this.getElement('runtime').textContent = `Runtime: ${movie.runtime} minutes`;
         this.getElement('cast').textContent = `Main cast: ${movie.cast.map(actor => actor.name).slice(0, 8).join(',  ')}`;
+        //this.getElement('trailer-div').innerHTML = `<p>trailer displayed</p>`
     }
 
     renderSearchedMovies() {
@@ -191,7 +249,7 @@ class MovieApp {
 }
 
 class Movie {
-    constructor(id, title, description, releaseDate, genres = [], runtime, cast, posterPath) {
+    constructor(id, title, description, releaseDate, genres = [], runtime, cast, posterPath, trailer) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -200,6 +258,7 @@ class Movie {
         this.runtime = runtime;
         this.cast = cast;
         this.posterPath = posterPath;
+        this.trailer = trailer;
     }
 }
 
