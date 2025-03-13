@@ -13,6 +13,12 @@ body {
   color: white;
 }
 
+/* #notification {
+    width: 100px;
+    background-color: bisque;
+    position: absolute;
+    bottom: 0;
+} */
 .image-div {
   padding: 5rem;
   background-image: url(theater.jpg);
@@ -21,14 +27,13 @@ body {
   background-color: black;
 }
 
-.hide {
-  display: none;
-}
-
 .flex {
   display: flex;
 }
 
+/* .hide {
+    display: none;
+} */
 .fa-home,
 .fa-play-circle {
   font-size: 1.5rem;
@@ -73,6 +78,7 @@ a :visited {
 .main {
   width: 100%;
   justify-content: space-between;
+  position: relative;
 }
 
 header {
@@ -126,9 +132,7 @@ textarea,
           backdrop-filter: blur(15px);
   position: sticky;
   top: 5rem;
-}
-#side-nav > a {
-  padding: 0.5rem;
+  padding: 2rem 0.5rem;
 }
 
 #display-movies,

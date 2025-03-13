@@ -16,7 +16,24 @@ class MovieApp {
 
         this.renderSearchedMovies();
         this.renderPopularMovies();
-        this.leaveComments();
+    }
+
+    save() {
+        localStorage.setItem('saved-movies', JSON.stringify(this.savedMovies));
+
+    }
+
+    load() {
+        const savedMoviesStorage = localStorage.getItem('saved-movies');
+
+        if (savedMoviesStorage === null) {
+            return;
+        }
+        this.savedMovies = JSON.parse(localStorage.getItem('saved-movies'));
+    }
+
+    renderMainContent() {
+        const dynamicDisplay = this.getElement('dynamic-display');
     }
 
     renderPopularMovies() {
@@ -52,6 +69,8 @@ class MovieApp {
             this.savedMovies.push(this.selectedMovie);
             this.renderDisplay();
         }
+        console.log(this.savedMovies);
+        this.save();
     }
 
     addToFavoriteMovies() {
@@ -68,27 +87,6 @@ class MovieApp {
             this.favoriteMovies.push(this.selectedMovie);
             this.renderDisplay();
         }
-    }
-
-    leaveComments() {
-        let comments = [];
-        const commentsInput = this.getElement('comments-input');
-        const commentsUl = this.getElement('comments-ul');
-        const postComment = this.getElement('post-comment');
-
-        postComment.addEventListener('click', () => {
-            commentsUl.innerHTML = '';
-            const newComment = commentsInput.value;
-            comments.push(newComment);
-            console.log(comments);
-            comments.forEach(comment => {
-                const postedComment = document.createElement('li');
-                postedComment.textContent = comment;
-                commentsUl.appendChild(postedComment);
-            })
-            commentsInput.value = '';
-        })
-
     }
 
     searchClicked() {
@@ -111,7 +109,7 @@ class MovieApp {
     populateMovies(tmdbMovies) {
         if (tmdbMovies.results && tmdbMovies.results.length > 0) {
             tmdbMovies.results.forEach(tmdbMovie => {
-                const movie = new Movie(tmdbMovie.id, tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date, "genres", 'runtime', 'cast', tmdbMovie.poster_path, 'trailer');
+                const movie = new Movie(tmdbMovie.id, tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date, "genres", 'runtime', 'cast', tmdbMovie.poster_path);
                 this.movies.push(movie);
 
             });
@@ -129,6 +127,25 @@ class MovieApp {
     movieClicked(movie) {
         this.selectedMovie = movie;
         this.getGenres(this.selectedMovie).then(this.getCredits.bind(this)).then(this.getTrailer(this.selectedMovie));
+
+        const commentsInput = this.getElement('comments-input');
+        const commentsUl = this.getElement('comments-ul');
+        const postComment = this.getElement('post-comment');
+        commentsUl.innerHTML = '';
+
+        postComment.addEventListener('click', () => {
+            commentsUl.innerHTML = '';
+            const newComment = commentsInput.value;
+            console.log(movie.comments);
+            movie.comments.push(newComment);
+
+            movie.comments.forEach(comment => {
+                const postedComment = document.createElement('li');
+                postedComment.textContent = comment;
+                commentsUl.appendChild(postedComment);
+            })
+            commentsInput.value = '';
+        })
     }
 
     getTrailer(movie) {
@@ -266,7 +283,7 @@ class MovieApp {
 }
 
 class Movie {
-    constructor(id, title, description, releaseDate, genres = [], runtime, cast, posterPath, trailer) {
+    constructor(id, title, description, releaseDate, genres = [], runtime, cast, posterPath) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -275,9 +292,10 @@ class Movie {
         this.runtime = runtime;
         this.cast = cast;
         this.posterPath = posterPath;
-        this.trailer = trailer;
+        this.comments = [];
     }
 }
 
 const newMovieApp = new MovieApp();
+newMovieApp.load();
 
