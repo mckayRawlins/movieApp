@@ -234,6 +234,7 @@ class MovieApp {
         } else {
             moviePoster.innerHTML = `<div class="null-image2">no image found</div><br><span>${movie.title}</span>`;
         }
+        this.rateMovie();
         this.getElement('movie-title-display').textContent = movie.title;
         this.getElement('movie-title').textContent = movie.title;
         this.getElement('movie-description').textContent = `Description: ${movie.description}`;
@@ -301,10 +302,50 @@ class MovieApp {
     createElement(tag) {
         return document.createElement(tag);
     }
+
+    rateMovie() {
+
+        const starsContainer = this.getElement('star-container');
+        let active = -1;
+        for (let i = 0; i < 5; i++) {
+            const star = this.createElement('span');
+            star.classList.add('fa', 'fa-star');
+            starsContainer.appendChild(star);
+
+            star.addEventListener("mouseover", () => onStarHover(i));
+            star.addEventListener("mouseleave", () => onStarOut());
+            star.addEventListener("click", () => onStarClick(i));
+        }
+
+        const stars = document.querySelectorAll(".fa-star");
+
+        function onStarHover(i) {
+            fill(i);
+        }
+
+        function fill(ratingValue) {
+            for (let i = 0; i < 5; i++) {
+                if (i <= ratingValue) {
+                    stars[i].classList.add('star-filled');
+                } else {
+                    stars[i].classList.remove('star-filled');
+                }
+            }
+        }
+
+        function onStarOut() {
+            fill(active);
+        }
+
+        function onStarClick(i) {
+            active = i;
+            fill(active);
+        }
+    }
 }
 
 class Movie {
-    constructor(id, title, description, releaseDate, genres = [], runtime, cast, posterPath, comments) {
+    constructor(id, title, description, releaseDate, genres = [], runtime, cast, posterPath) {
         this.id = id;
         this.title = title;
         this.description = description;
@@ -313,7 +354,6 @@ class Movie {
         this.runtime = runtime;
         this.cast = cast;
         this.posterPath = posterPath;
-        this.comments = [];
     }
 }
 
@@ -323,6 +363,8 @@ class MovieReviews {
         this.comments = comments;
         this.rating = rating;
     }
+
+
 }
 
 const newMovieApp = new MovieApp();
