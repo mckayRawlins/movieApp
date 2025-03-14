@@ -10,21 +10,51 @@ class MovieApp {
         favoriteMovieButton.addEventListener('click', this.addToFavoriteMovies.bind(this));
         const commentButton = this.getElement('comment-button')
         commentButton.addEventListener('click', this.commentButtonClicked.bind(this));
+        const savedMoviesButton = this.getElement('saved-movies-button');
+        savedMoviesButton.addEventListener('click', this.navigateToSavedMovies.bind(this));
+
+        this.mainSearchPage = this.getElement('main-search-page');
+        this.movieInfoPage = this.getElement('movie-info-page');
+        this.savedMoviesPage = this.getElement('saved-movies-page');
+
+        this.showPage(this.mainSearchPage);
 
         this.movies = [];
         this.selectedMovie = null;
         this.savedMovies = [];
         this.favoriteMovies = [];
-        this.moviesWithComments = [];
+        this.moviesWithReviews = [];
 
         this.renderSearchedMovies();
         this.renderPopularMovies();
     }
 
+    showPage(pageDiv) {
+        this.mainSearchPage.classList.add('hide');
+        this.movieInfoPage.classList.add('hide');
+        this.savedMoviesPage.classList.add('hide');
+
+        if (pageDiv === this.mainSearchPage) {
+            this.mainSearchPage.classList.remove('hide');
+        } else if (pageDiv === this.movieInfoPage) {
+            this.movieInfoPage.classList.remove('hide')
+        } else if (pageDiv === this.savedMoviesPage) {
+            this.savedMoviesPage.classList.remove('hide')
+        } else {
+            this.mainSearchPage.classList.remove('hide');
+        }
+    }
+
+    navigateToSavedMovies() {
+        this.showPage(this.savedMoviesPage);
+        this.load();
+        this.renderDisplay();
+    }
+
     save() {
         this.setItem('saved-movies', this.savedMovies);
         this.setItem('favorite-movies', this.favoriteMovies);
-        this.setItem('movie-comments', this.moviesWithComments);
+        this.setItem('movie-comments', this.moviesWithReviews);
 
         // When the user saves a comment, store the selected movie id and the comment in an
         // object to local storage. 
@@ -40,9 +70,9 @@ class MovieApp {
     }
 
     load() {
-        this.savedMovies = this.getItem('saved-movies');
-        this.favoriteMovies = this.getItem('favorite-movies');
-        this.moviesWithComments = this.getItem('movie-comments') || [];
+        this.savedMovies = this.getItem('saved-movies') || [];
+        this.favoriteMovies = this.getItem('favorite-movies') || [];
+        this.moviesWithReviews = this.getItem('movie-comments') || [];
     }
 
     /* renderMainContent() {
@@ -57,7 +87,7 @@ class MovieApp {
             .then(response => response.json())
             .then(popularData => {
                 popularData.results.forEach(movie => {
-                    const popularMovie = new Movie(movie.id, movie.title, movie.overview, movie.release_date, "genres", 'runtime', 'cast', movie.poster_path);
+                    const popularMovie = new Movie(movie.id, movie.title, movie.overview, movie.release_date, undefined, undefined, undefined, movie.poster_path);
 
                     const displayMovieLi = document.createElement('li');
                     displayMovieLi.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${popularMovie.posterPath}"><br><span>${popularMovie.title}</span>`
@@ -79,26 +109,25 @@ class MovieApp {
 
 
     storeMovies(storedMovies) {
-        let alreadyFavorited = false;
-
-        for (let i = 0; i < storedMovies.length; i++) {
-            if (this.selectedMovie.id === storedMovies[i].id) {
-                alreadyFavorited = true;
-                break;
-            }
+        if (!storedMovies) {
+            storedMovies.push(this.selectedMovie);
         }
+        const existingMovie = storedMovies.find(savedMovie => this.selectedMovie.id === savedMovie.id);
 
-        if (alreadyFavorited === false) {
+        if (existingMovie) {
+            return;
+        } else {
             storedMovies.push(this.selectedMovie);
             this.renderDisplay();
         }
+
         this.save();
     }
 
     searchClicked() {
         this.movies = [];
         this.getMovieDetails();
-        console.log(this.movies);
+
     }
 
     getMovieDetails() {
@@ -116,7 +145,7 @@ class MovieApp {
     populateMovies(tmdbMovies) {
         if (tmdbMovies.results && tmdbMovies.results.length > 0) {
             tmdbMovies.results.forEach(tmdbMovie => {
-                const movie = new Movie(tmdbMovie.id, tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date, "genres", 'runtime', 'cast', tmdbMovie.poster_path);
+                const movie = new Movie(tmdbMovie.id, tmdbMovie.title, tmdbMovie.overview, tmdbMovie.release_date, undefined, undefined, undefined, tmdbMovie.poster_path);
                 this.movies.push(movie);
             });
             const displayedMoviesH2 = this.getElement('display-movies-h2');
@@ -132,22 +161,35 @@ class MovieApp {
 
     movieClicked(movie) {
         this.selectedMovie = movie;
+
+        this.showPage(this.movieInfoPage);
         this.getGenres(this.selectedMovie)
-            .then(this.getCredits)
+            .then(this.getCredits.bind(this))
             .then(this.getTrailer.bind(this))
-            .then(this.renderMovieDetails.bind(this));
+            .then(this.renderMovieDetails.bind(this))
+            .then(() => {
+                const savedMovieReviews = this.moviesWithReviews.find(movieRating => movieRating.movieId === movie.id);
+
+                this.selectedMovie = {
+                    ...this.selectedMovie,
+                    comments: savedMovieReviews?.comments,
+                    rating: savedMovieReviews?.rating
+                };
+            });
+
+
     }
 
     commentButtonClicked() {
         const commentsInput = this.getElement('comments-input');
         const newComment = commentsInput.value;
 
-        const existingMovieWithComments = this.moviesWithComments
-            .find(movieWithComments => movieWithComments.movieId === this.selectedMovie.id);
+        const existingMovieWithComments = this.moviesWithReviews
+            .find(movieWithReviews => movieWithReviews.movieId === this.selectedMovie.id);
         if (existingMovieWithComments) {
             existingMovieWithComments.comments.push(newComment);
         } else {
-            this.moviesWithComments.push(new MovieReviews(this.selectedMovie.id, [newComment]))
+            this.moviesWithReviews.push(new MovieReviews(this.selectedMovie.id, [newComment], 'rating'))
         }
         commentsInput.value = ''
         this.save();
@@ -210,7 +252,7 @@ class MovieApp {
         return fetch(genresUrl)
             .then(reponse => reponse.json())
             .then(genresData => {
-                movie.genres = genresData.genres;
+                movie.genres = genresData?.genres || movie.genres;
                 movie.runtime = genresData.runtime;
                 return movie;
             });
@@ -222,31 +264,32 @@ class MovieApp {
         return fetch(creditsUrl)
             .then(creditsResponse => creditsResponse.json())
             .then(creditsData => {
-                movie.cast = creditsData.cast;
+                movie.cast = creditsData?.cast || movie.cast;
                 return movie;
             });
     }
 
     renderMovieDetails(movie) {
+        movie = this.selectedMovie;
         const moviePoster = this.getElement('movie-poster');
         if (movie.posterPath !== null) {
             moviePoster.innerHTML = `<img src="https://image.tmdb.org/t/p/w185${movie.posterPath}"></img>`;
         } else {
             moviePoster.innerHTML = `<div class="null-image2">no image found</div><br><span>${movie.title}</span>`;
         }
-        this.rateMovie();
+        this.rateMovie(movie);
         this.getElement('movie-title-display').textContent = movie.title;
         this.getElement('movie-title').textContent = movie.title;
         this.getElement('movie-description').textContent = `Description: ${movie.description}`;
         this.getElement('release-date').textContent = `Release date: ${movie.releaseDate}`;
-        this.getElement('movie-genre').textContent = `Genres: ${movie.genres.map(genre => genre.name).join(',  ')}`;
+        this.getElement('movie-genre').textContent = `Genres: ${movie.genres?.map(genre => genre.name).join(',  ')}`;
         this.getElement('runtime').textContent = `Runtime: ${movie.runtime} minutes`;
-        this.getElement('cast').textContent = `Main cast: ${movie.cast.map(actor => actor.name).slice(0, 8).join(',  ')}`;
+        this.getElement('cast').textContent = `Main cast: ${movie.cast?.map(actor => actor.name).slice(0, 8).join(',  ')}`;
 
         const commentsUl = this.getElement('comments-ul');
         commentsUl.innerHTML = '';
 
-        const tmdbMovieComments = this.moviesWithComments.find(movieComment => movieComment.movieId === movie.id);
+        const tmdbMovieComments = this.moviesWithReviews.find(movieComment => movieComment.movieId === movie.id);
         if (tmdbMovieComments) {
             movie.comments = tmdbMovieComments.comments;
 
@@ -303,46 +346,60 @@ class MovieApp {
         return document.createElement(tag);
     }
 
-    rateMovie() {
-
+    rateMovie(movie) {
         const starsContainer = this.getElement('star-container');
-        let active = -1;
+        starsContainer.innerHTML = '';
         for (let i = 0; i < 5; i++) {
             const star = this.createElement('span');
             star.classList.add('fa', 'fa-star');
             starsContainer.appendChild(star);
 
-            star.addEventListener("mouseover", () => onStarHover(i));
-            star.addEventListener("mouseleave", () => onStarOut());
-            star.addEventListener("click", () => onStarClick(i));
+            star.addEventListener("mouseover", () => this.onStarHover(i));
+            star.addEventListener("mouseleave", () => this.onStarOut());
+            star.addEventListener("click", () => this.onStarClick(i, movie));
         }
+        setTimeout(() => {
+            this.fill();
+        })
+    }
+    onStarHover(i) {
+        this.fill(i);
+    }
 
+
+    onStarOut() {
+        this.fill();
+    }
+
+    onStarClick(i, movie) {
+        this.selectedMovie.rating = (i + 1) || -1;
+        this.fill();
+
+        const existingMovieWithRating = this.moviesWithReviews
+            .find(movieWithRating => movieWithRating.movieId === movie.id);
+        if (existingMovieWithRating) {
+            existingMovieWithRating.rating = i + 1;
+        } else {
+
+            this.moviesWithReviews.push(new MovieReviews(this.selectedMovie.id, [], i + 1));
+        }
+        this.save();
+    }
+
+    fill(ratingValue) {
+        ratingValue = ratingValue || (this.selectedMovie.rating - 1);
         const stars = document.querySelectorAll(".fa-star");
-
-        function onStarHover(i) {
-            fill(i);
-        }
-
-        function fill(ratingValue) {
-            for (let i = 0; i < 5; i++) {
-                if (i <= ratingValue) {
-                    stars[i].classList.add('star-filled');
-                } else {
-                    stars[i].classList.remove('star-filled');
-                }
+        for (let i = 0; i < 5; i++) {
+            if (i <= ratingValue) {
+                stars[i].classList.add('star-filled');
+            } else {
+                stars[i].classList.remove('star-filled');
             }
-        }
-
-        function onStarOut() {
-            fill(active);
-        }
-
-        function onStarClick(i) {
-            active = i;
-            fill(active);
         }
     }
 }
+
+
 
 class Movie {
     constructor(id, title, description, releaseDate, genres = [], runtime, cast, posterPath) {
@@ -363,8 +420,6 @@ class MovieReviews {
         this.comments = comments;
         this.rating = rating;
     }
-
-
 }
 
 const newMovieApp = new MovieApp();

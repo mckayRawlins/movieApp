@@ -13,88 +13,92 @@
 
 <body>
     <div class="image-div">
+
         <div class="flex main" id="dynamic-display">
             <div class="flex side-nav-parent" id="side-nav-parent">
                 <div class="flex side-nav" id="side-nav">
                     <a href="index.html"><span class="fa fa-home"></span></a>
-                    <span class="fa fa-play-circle"></span>
+                    <a href="index.html"><span class="fa fa-search"></span></a>
+                    <span id="saved-movies-button" class="fa fa-play-circle"></span>
                 </div>
             </div>
 
-            <div class="display-info hide" id="movie-info-display">
-                <header class="flex">
-                    <h1>Search and Explore Movies</h1>
-                </header>
+            <div id="main-search-page">
+                <div class="display-info">
+                    <header class="flex">
+                        <h1>Search and Explore Movies</h1>
+                    </header>
 
-                <span class="flex search">
-                    <input id="search-movies-input" type="text" placeholder="search movies">
-                    <span id="search" class="fa fa-search"></span>
-                </span>
+                    <span class="flex search">
+                        <input id="search-movies-input" type="text" placeholder="search movies">
+                        <span id="search" class="fa fa-search"></span>
+                    </span>
 
-                <h2 id="display-movies-h2">Popular movies</h2>
-                <div>
-                    <ul id="display-movies"> </ul>
-                </div>
-            </div>
-        </div>
-
-        <div class="flex main">
-
-            <div class="display-info main" id="movie-info-display">
-                <header class="flex">
-                    <h1 id="movie-title-display">Movie title here</h1>
-                    <span class="fa fa-plus" id="save-movie"></span>
-                    <span class="fa fa-heart" id="favorite-movie"></span>
-                </header>
-
-                <div id="movie-poster"></div>
-
-                <p>Rate this movie</p>
-                <div id="star-container"></div>
-
-                <div>
-                    <h3 id="movie-title">Title: </h3>
-                    <p id="movie-description">Description: </p>
-                    <p id="release-date">Release date: </p>
-                    <p id="movie-genre">Genre: </p>
-                    <p id="runtime">Runtime: </p>
-                    <p id="cast">Cast: </p>
-                </div>
-
-                <div>
-                    <h2>Watch the trailer</h2>
-                    <div id="trailer-container">
+                    <h2 id="display-movies-h2">Popular movies</h2>
+                    <div>
+                        <ul id="display-movies"> </ul>
                     </div>
                 </div>
-                <div class="flex" id="comments">
-                    <textarea rows="5" cols="30" placeholder="comments" id="comments-input"></textarea>
-                    <button id="comment-button">Comment</button>
-                </div>
-                <h3>Comments</h3>
-                <ul id="comments-ul"></ul>
             </div>
-
-            <!-- <div id="notification">notification</div> -->
         </div>
 
-        <div id="saved-movies" class="flex main hide">
+        <div id="movie-info-page">
+            <div class="flex main">
+                <div class="display-info">
+                    <header class="flex">
+                        <h1 id="movie-title-display">Movie title here</h1>
+                        <span class="fa fa-plus" id="save-movie"></span>
+                        <span class="fa fa-heart" id="favorite-movie"></span>
+                    </header>
 
-            <div class="display-info" id="movie-info-display">
-                <header class="flex">
-                    <h1>Saved Movies</h1>
-                </header>
+                    <div id="movie-poster"></div>
 
-                <div>
-                    <ul id="saved-movies-ul"></ul>
+                    <p>Rate this movie</p>
+                    <div id="star-container"></div>
+
+                    <div>
+                        <h3 id="movie-title">Title: </h3>
+                        <p id="movie-description">Description: </p>
+                        <p id="release-date">Release date: </p>
+                        <p id="movie-genre">Genre: </p>
+                        <p id="runtime">Runtime: </p>
+                        <p id="cast">Cast: </p>
+                    </div>
+
+                    <div>
+                        <h2>Watch the trailer</h2>
+                        <div id="trailer-container">
+                        </div>
+                    </div>
+                    <div class="flex" id="comments">
+                        <textarea rows="5" cols="30" placeholder="comments" id="comments-input"></textarea>
+                        <button id="comment-button">Comment</button>
+                    </div>
+                    <h3>Comments</h3>
+                    <ul id="comments-ul"></ul>
                 </div>
+            </div>
+        </div>
 
-                <div>
-                    <h3>Favorted Movies</h3>
-                    <ul id="favorited-movies-ul"></ul>
+        <div id="saved-movies-page">
+            <div class="flex main">
+                <div class="display-info">
+                    <header class="flex">
+                        <h1>Saved Movies</h1>
+                    </header>
+
+                    <div>
+                        <ul id="saved-movies-ul"></ul>
+                    </div>
+
+                    <div>
+                        <h3>Favorited Movies</h3>
+                        <ul id="favorited-movies-ul"></ul>
+                    </div>
+
                 </div>
 
             </div>
-
         </div>
     </div>
 </body>

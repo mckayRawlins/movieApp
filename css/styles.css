@@ -31,9 +31,10 @@ body {
   display: flex;
 }
 
-/* .hide {
-    display: none;
-} */
+.hide {
+  display: none;
+}
+
 .fa-home,
 .fa-play-circle {
   font-size: 1.5rem;
