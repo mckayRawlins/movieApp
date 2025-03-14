@@ -4,8 +4,8 @@ class MovieApp {
     constructor() {
         const search = this.getElement('search');
         search.addEventListener('click', this.searchClicked.bind(this));
-        const saveMovieButton = this.getElement('save-movie');
-        saveMovieButton.addEventListener('click', this.addToSavedMovies.bind(this));
+        this.saveMovieButton = this.getElement('save-movie');
+        this.saveMovieButton.addEventListener('click', this.addToSavedMovies.bind(this));
         const favoriteMovieButton = this.getElement('favorite-movie');
         favoriteMovieButton.addEventListener('click', this.addToFavoriteMovies.bind(this));
         const commentButton = this.getElement('comment-button')
@@ -56,8 +56,6 @@ class MovieApp {
         this.setItem('favorite-movies', this.favoriteMovies);
         this.setItem('movie-comments', this.moviesWithReviews);
 
-        // When the user saves a comment, store the selected movie id and the comment in an
-        // object to local storage. 
         this.renderMovieDetails(this.selectedMovie);
     }
 
@@ -69,15 +67,25 @@ class MovieApp {
         return JSON.parse(localStorage.getItem(key));
     }
 
+    removeItem(key) {
+        localStorage.removeItem(key);
+    }
+
+
+    removeStoredMovie() {
+        const savedMovies = JSON.parse(localStorage.getItem('saved-movies'));
+        console.log('before', savedMovies);
+        this.savedMovies = savedMovies.filter(movie => movie.id !== this.selectedMovie.id)
+        console.log('after', this.savedMovies)
+        this.save();
+        this.renderDisplay();
+    }
+
     load() {
         this.savedMovies = this.getItem('saved-movies') || [];
         this.favoriteMovies = this.getItem('favorite-movies') || [];
         this.moviesWithReviews = this.getItem('movie-comments') || [];
     }
-
-    /* renderMainContent() {
-        const dynamicDisplay = this.getElement('dynamic-display');
-    } */
 
     renderPopularMovies() {
         const displayMoviesUl = this.getElement('display-movies');
@@ -101,6 +109,9 @@ class MovieApp {
 
     addToSavedMovies() {
         this.storeMovies(this.savedMovies);
+        this.saveMovieButton.classList.remove('fa-plus');
+        this.saveMovieButton.classList.add('fa-trash');
+
     }
 
     addToFavoriteMovies() {
@@ -112,10 +123,16 @@ class MovieApp {
         if (!storedMovies) {
             storedMovies.push(this.selectedMovie);
         }
+
+        // When a user clicks favorite, add this.selectedMovie to the storedMovie list (favorited or saved);
+        // When a user clicks it again, if the movie is in the array, removie it. 
+
         const existingMovie = storedMovies.find(savedMovie => this.selectedMovie.id === savedMovie.id);
 
         if (existingMovie) {
-            return;
+            storedMovies = storedMovies.slice(storedMovies.indexOf(this.selectedMovie));
+            this.removeStoredMovie();
+            this.renderDisplay();
         } else {
             storedMovies.push(this.selectedMovie);
             this.renderDisplay();
