@@ -6,8 +6,8 @@ class MovieApp {
         search.addEventListener('click', this.searchClicked.bind(this));
         this.saveMovieButton = this.getElement('save-movie');
         this.saveMovieButton.addEventListener('click', this.addToSavedMovies.bind(this));
-        const favoriteMovieButton = this.getElement('favorite-movie');
-        favoriteMovieButton.addEventListener('click', this.addToFavoriteMovies.bind(this));
+        this.favoriteMovieButton = this.getElement('favorite-movie');
+        this.favoriteMovieButton.addEventListener('click', this.addToFavoriteMovies.bind(this));
         const commentButton = this.getElement('comment-button')
         commentButton.addEventListener('click', this.commentButtonClicked.bind(this));
         const savedMoviesButton = this.getElement('saved-movies-button');
@@ -74,9 +74,9 @@ class MovieApp {
 
     removeStoredMovie() {
         const savedMovies = JSON.parse(localStorage.getItem('saved-movies'));
-        console.log('before', savedMovies);
-        this.savedMovies = savedMovies.filter(movie => movie.id !== this.selectedMovie.id)
-        console.log('after', this.savedMovies)
+        const favoriteMovies = JSON.parse(localStorage.getItem('favorite-movies'));
+        this.savedMovies = savedMovies.filter(movie => movie.id !== this.selectedMovie.id);
+        this.favoriteMovies = favoriteMovies.filter(movie => movie.id !== this.selectedMovie.id);
         this.save();
         this.renderDisplay();
     }
@@ -98,7 +98,11 @@ class MovieApp {
                     const popularMovie = new Movie(movie.id, movie.title, movie.overview, movie.release_date, undefined, undefined, undefined, movie.poster_path);
 
                     const displayMovieLi = document.createElement('li');
-                    displayMovieLi.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${popularMovie.posterPath}"><br><span>${popularMovie.title}</span>`
+                    if (movie.poster_path) {
+                        displayMovieLi.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${popularMovie.posterPath}"><br><span>${popularMovie.title}</span>`
+                    } else {
+                        displayMovieLi.innerHTML = `<div class = "null-image"><span>no image found</span></div>`
+                    }
                     displayMovieLi.addEventListener('click', () => this.movieClicked(popularMovie));
                     displayMoviesUl.appendChild(displayMovieLi);
                     this.movies.push(popularMovie);
@@ -116,6 +120,8 @@ class MovieApp {
 
     addToFavoriteMovies() {
         this.storeMovies(this.favoriteMovies);
+        this.favoriteMovieButton.classList.remove('fa-heart');
+        this.favoriteMovieButton.classList.add('fa-trash');
     }
 
 
@@ -127,7 +133,7 @@ class MovieApp {
         // When a user clicks favorite, add this.selectedMovie to the storedMovie list (favorited or saved);
         // When a user clicks it again, if the movie is in the array, removie it. 
 
-        const existingMovie = storedMovies.find(savedMovie => this.selectedMovie.id === savedMovie.id);
+        const existingMovie = storedMovies.find(storedMovie => this.selectedMovie.id === storedMovie.id);
 
         if (existingMovie) {
             storedMovies = storedMovies.slice(storedMovies.indexOf(this.selectedMovie));
@@ -344,6 +350,7 @@ class MovieApp {
             savedMoviesLi.movie = movie;
             savedMoviesLi.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${movie.posterPath}"><br><span>${movie.title}</span>`;
             savedMoviesUl.appendChild(savedMoviesLi);
+            //savedMoviesLi.addEventListener('click', this.movieClicked(movie));
         });
 
         const favoritedMoviesUl = this.getElement('favorited-movies-ul');
@@ -353,6 +360,7 @@ class MovieApp {
             favoritedMoviesLi.movie = movie;
             favoritedMoviesLi.innerHTML = `<img src="https://image.tmdb.org/t/p/w92${movie.posterPath}"><br><span>${movie.title}</span>`;
             favoritedMoviesUl.appendChild(favoritedMoviesLi);
+            //favoritedMoviesLi.addEventListener('click', this.movieClicked(movie));
         })
     }
 

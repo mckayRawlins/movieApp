@@ -20,11 +20,12 @@ body {
     bottom: 0;
 } */
 .image-div {
-  padding: 5rem;
+  padding: 3rem;
   background-image: url(theater.jpg);
   background-position: center;
   background-size: cover;
   background-color: black;
+  min-height: 100vh;
 }
 
 .flex {
@@ -67,10 +68,14 @@ button:hover {
 
 .display-info {
   border-radius: 0.9rem;
+  padding: 2rem;
   border: 1px solid gray;
   background-color: rgba(90, 88, 88, 0.6);
   -webkit-backdrop-filter: blur(15px);
           backdrop-filter: blur(15px);
+  min-height: 80vh;
+  width: 80vw;
+  min-width: 80vw;
 }
 
 a {
@@ -80,9 +85,9 @@ a :visited {
   color: white;
 }
 
-.main {
+.main-wrapper {
   width: 100%;
-  justify-content: space-between;
+  justify-content: space-evenly;
   position: relative;
 }
 
