@@ -36,26 +36,16 @@ body {
   display: none;
 }
 
-.fa-home,
-.fa-play-circle {
-  font-size: 1.5rem;
+.fa {
+  font-size: 1.3rem;
+  border-radius: 50%;
+  padding: 0.5rem;
+  text-align: center;
 }
 
 .fa:hover,
 button:hover {
   cursor: pointer;
-}
-
-.fa {
-  text-align: center;
-}
-
-.fa-plus,
-.fa-search,
-#favorite-movie {
-  background-color: lightgray;
-  border-radius: 50%;
-  padding: 0.5rem;
 }
 
 .star-filled {
@@ -76,6 +66,14 @@ button:hover {
   min-height: 80vh;
   width: 80vw;
   min-width: 80vw;
+}
+
+#star-container {
+  margin-bottom: 1.5rem;
+}
+
+.movie-details > * {
+  margin-bottom: 0.9rem;
 }
 
 a {
@@ -143,6 +141,10 @@ textarea,
   position: sticky;
   top: 5rem;
   padding: 2rem 0.5rem;
+}
+
+#saved-movies-ul {
+  margin-bottom: 1.5rem;
 }
 
 #display-movies,
