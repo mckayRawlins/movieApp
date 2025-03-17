@@ -1,1 +1,1 @@
-# movieApp
+Users can browse a wide selection of movies and save/favorite them. Users can also comment on and rate movies
